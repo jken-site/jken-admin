@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-09T21:17:25.389+08:00
+  -->
+
+<module name="wechat" sortNo="900" ignorePatterns="/wxa/**,/wxp/**">
+    <domains>
+        <domain name="公众号" code="officialaccount" crud="true"/>
+        <domain name="小程序" code="miniprogram" crud="true"/>
+    </domains>
+    <menus>
+        <mi name="微信管理" code="cms" iconCls="layui-icon-login-wechat">
+            <mi name="公众号" code="officialaccount" href="officialaccount"
+                authorities="officialaccount-list,officialaccount-view,officialaccount-add,officialaccount-edit,officialaccount-delete"/>
+            <mi name="小程序" code="miniprogram" href="miniprogram"
+                authorities="miniprogram-list,miniprogram-view,miniprogram-add,miniprogram-edit,miniprogram-delete"/>
+        </mi>
+    </menus>
+</module>

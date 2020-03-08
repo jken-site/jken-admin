@@ -1,0 +1,208 @@
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-04T15:00:37.486+08:00
+  -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>jken application</title>
+    <meta content="webkit" name="renderer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        name="viewport">
+    <link href="https://www.layuicdn.com/layui/css/layui.css" media="all" rel="stylesheet">
+</head>
+
+<body>
+    <div class="layui-form" id="jk-form" lay-filter="jk-form" style="padding: 20px 30px 0 0;" th:object="${entity}">
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>字典名称</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入字典名称"
+                    th:field="*{name}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>字典代号</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入字典代号"
+                    th:field="*{code}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">类型</label>
+            <div class="layui-input-inline">
+                <select lay-verify="required" th:field="*{type}">
+                    <option value="LIST_OPTION" selected>列表</option>
+                    <option value="LIST_GROUP" disabled>分组列表</option>
+                    <option value="TREE" disabled>树</option>
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux">暂只支持列表</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-inline">
+                <textarea autocomplete="off" class="layui-textarea" style="width: 400px; height: 150px;"
+                    th:field="*{remark}"></textarea>
+            </div>
+        </div>
+
+        <fieldset class="layui-elem-field">
+            <legend>选择项</legend>
+            <div class="layui-field-box">
+                <div class="layui-btn-group">
+                    <button id="jk-btn-add" type="button" class="layui-btn layui-btn-sm">
+                        <i class="layui-icon">&#xe654;</i>
+                    </button>
+                </div>
+                <div id="list-item">
+                    <div class="layui-form-item" style="display:none">
+                        <input type="hidden" name="id" disabled>
+                        <input type="hidden" name="sortNo" disabled>
+                        <div class="layui-inline">
+                            <label class="layui-form-label"><span class="num"></span>. 显示</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" autocomplete="off" class="layui-input" disabled>
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">值</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="value" autocomplete="off" class="layui-input" disabled>
+                            </div>
+                        </div>
+                        <div class="layui-btn-group">
+                            <button type="button" class="layui-btn layui-btn-xs item-add">
+                                <i class="layui-icon">&#xe654;</i>
+                            </button>
+                            <button type="button" class="layui-btn layui-btn-xs layui-btn-danger item-delete">
+                                <i class="layui-icon">&#xe67e;</i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="layui-form-item" th:each="item:*{items}">
+                        <input type="hidden" name="id" th:value="${item.id}">
+                        <input type="hidden" name="sortNo" th:value="${item.sortNo}">
+                        <div class="layui-inline">
+                            <label class="layui-form-label"><span class="num"></span>. 显示</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="name" th:value="${item.name}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">值</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="value" th:value="${item.value}" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-btn-group">
+                            <button type="button" class="layui-btn layui-btn-xs item-add">
+                                <i class="layui-icon">&#xe654;</i>
+                            </button>
+                            <button type="button" class="layui-btn layui-btn-xs layui-btn-danger item-delete">
+                                <i class="layui-icon">&#xe67e;</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="layui-form-item layui-hide">
+            <input id="jk-form-submit" lay-filter="jk-form-submit" lay-submit type="button" value="确认添加">
+            <input id="jk-form-edit" lay-filter="jk-form-edit" lay-submit type="button" value="确认编辑">
+        </div>
+    </div>
+
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script th:inline="javascript" type="text/javascript">
+        var base = /*[[${#httpServletRequest.getContextPath()}]]*/"";
+        var entityId = /*[[${entity.id}]]*/null;
+        var addAble = /*[[${#authorization.expr("hasAuthority('dict-add')")}]]*/false;
+        var editAble = /*[[${#authorization.expr("hasAuthority('dict-edit')")}]]*/false;
+    </script>
+    <script>
+        layui.config({
+            base: base + '/layuiadmin/'
+        }).extend({
+            edit: 'core/edit'
+        }).use(['edit'], function () {
+            var $ = layui.$, form = layui.form;
+
+            var $listItem = $("#list-item");
+            var refreshItems = function () {
+                var $formItems = $listItem.children(".layui-form-item");
+                for (var i = 1; i < $formItems.length; i++) {
+                    var $formItem = $($formItems[i]);
+                    $formItem.find("input[name=sortNo]").val(i);
+
+                    var $inputs = $formItem.find("input");
+                    $formItem.find(".num").text(i);
+                    for (var j = 0; j < $inputs.length; j++) {
+                        var $input = $($inputs[j]);
+                        $input.removeAttr("disabled");
+
+                        var inputName = $input.attr("name");
+                        if (inputName.indexOf(".") > -1) {
+                            inputName = inputName.substr(inputName.lastIndexOf(".") + 1);
+                        }
+                        $input.attr("name", "items[" + (i - 1) + "]." + inputName);
+                    }
+                }
+            };
+
+            refreshItems();
+
+            $("#jk-btn-add").on("click", function () {
+                var $inputItem = $("#list-item > .layui-form-item:first");
+                $inputItem.after($inputItem.clone(true).show());
+                refreshItems();
+            });
+
+            $listItem.delegate(".item-add", "click", function () {
+                var $this = $(this);
+                var $inputItem = $("#list-item > .layui-form-item:first");
+                $this.closest(".layui-form-item").after($inputItem.clone(true).show());
+                refreshItems();
+            });
+            $listItem.delegate(".item-delete", "click", function () {
+                $(this).closest('.layui-form-item').remove();
+                refreshItems();
+            });
+
+            //监听提交
+            form.on('submit(jk-form-submit)', function (data) {
+                if (entityId && editAble || !entityId && addAble) {
+                    $.ajax({
+                        url: base + '/dict' + (entityId ? '/' + entityId : ''),
+                        data: data.field,
+                        dataType: 'json',
+                        type: entityId ? 'put' : 'post',
+                        success: function (resp) {
+                            if (resp.code == 0) {
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.layui.table.reload('jk-table');
+                                parent.layer.close(index);
+                            } else {
+                                layer.msg(resp.msg, { time: 2000 }, function () { });
+                            }
+                        },
+                        error: function (resp) {
+                            layer.msg(resp.responseJSON.message, { time: 2000 }, function () { });
+                        }
+                    });
+                } else {
+                    layer.msg('无权限');
+                }
+                return false;
+            });
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,86 @@
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-04T15:00:37.513+08:00
+  -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>Autumn Web Application</title>
+    <meta content="webkit" name="renderer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        name="viewport">
+    <link href="https://www.layuicdn.com/layui/css/layui.css" media="all" rel="stylesheet">
+    <link media="all" rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}">
+</head>
+
+<body>
+
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header">项目概况</div>
+            <div class="layui-card-body">
+
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>前言</legend>
+                    <div class="layui-field-box">
+                        <p>jken.site是中小型项目通用后台管理平台，支持多租户模式，已包含常用的功能，致力于简单、快速、高质量地完成各种需求。同时该平台是SpringBoot/SpringSecurity/SpringData的最佳实践。</p>
+                        <blockquote class="layui-elem-quote">本人承诺该平台完全开源，完全免费，后续不会有任何收费计划。</blockquote>
+                    </div>
+                </fieldset>
+
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>特性</legend>
+                    <div class="layui-field-box">
+                        <ul>
+                            <li>基于最新JDK (当前为JDK13)</li>
+                            <li>基于最新SpringBoot (当前为2.2.4.RELEASE)</li>
+                            <li>基于SpringSecurity的角色权限</li>
+                            <li>基于SpringData-JPA的持久层</li>
+                            <li>基于LayuiAdmin的前端框架</li>
+                            <li>支持多租户模式的后台管理平台</li>
+                            <li>运用设计模式，保证代码质量和可读性</li>
+                        </ul>
+                    </div>
+                </fieldset>
+
+                <fieldset class="layui-elem-field layui-field-title">
+                    <legend>模块</legend>
+                    <div class="layui-field-box">
+                        <ul>
+                            <li>通用管理（企业，部门，用户，角色，权限，菜单，字典，消息，设置）</li>
+                            <li>小型CMS</li>
+                            <li>基于Quartz作业调度</li>
+                            <li>基于activiti自定义工作流</li>
+                            <li>微信公众号及小程序管理</li>
+                            <li>通用支付管理（银联、微信、支付宝）</li>
+                        </ul>
+                    </div>
+                </fieldset>
+
+                <!--<img alt="GitHub forks badge" src="https://img.shields.io/github/forks/xiangxik/jken.site">
+                <img alt="GitHub stars badge" src="https://img.shields.io/github/stars/xiangxik/jken.site">
+                <img alt="GitHub issues badge" src="https://img.shields.io/github/issues/xiangxik/jken.site">
+                <img alt="GitHub issues closed badge"
+                    src="https://img.shields.io/github/issues-closed/xiangxik/jken.site">
+                <img alt="GitHub pull request opened badge"
+                    src="https://img.shields.io/github/issues-pr/xiangxik/jken.site">
+                <img alt="GitHub pull request closed badge"
+                    src="https://img.shields.io/github/issues-pr-closed/xiangxik/jken.site">
+                <img alt="GitHub last commit badge" src="https://img.shields.io/github/last-commit/xiangxik/jken.site">
+                <img alt="GitHub license badge" src="https://img.shields.io/github/license/xiangxik/jken.site">
+                <img alt="Twitter badge"
+                    src="https://img.shields.io/twitter/url?url=https%3A%2F%2Fgithub.com%2Fxiangxik%2Fjken.site">-->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+</body>
+
+</html>

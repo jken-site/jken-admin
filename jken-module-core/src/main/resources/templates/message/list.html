@@ -1,0 +1,90 @@
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-04T15:00:37.488+08:00
+  -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>jken application</title>
+    <meta content="webkit" name="renderer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        name="viewport">
+    <link href="https://www.layuicdn.com/layui/css/layui.css" media="all" rel="stylesheet">
+    <link media="all" rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}">
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-tab layui-tab-brief" lay-filter="jk-message-tab" style="margin: 0 0 20px;">
+                <ul class="layui-tab-title">
+                    <li class="layui-this">全部消息</li>
+                    <li lay-id="NOTIFICATION">通知<!--<span class="layui-badge">6</span>--></li>
+                    <li lay-id="LETTER">私信</li>
+                </ul>
+                <div class="layui-tab-content">
+                    <div class="LAY-app-message-btns" style="margin-bottom: 10px;">
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="all"
+                            data-events="del">删除</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="all"
+                            data-events="ready">标记已读</button>
+                        <button class="layui-btn layui-btn-primary layui-btn-sm" data-type="all"
+                            data-events="readyAll">全部已读</button>
+                    </div>
+                    <table id="jk-table" lay-filter="jk-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script th:inline="javascript" type="text/javascript">
+        var base = /*[[${#httpServletRequest.getContextPath()}]]*/"";
+    </script>
+    <script>
+        layui.config({
+            base: base + '/layuiadmin/'
+        }).use(['table', 'element'], function () {
+            var table = layui.table, form = layui.form, element = layui.element;
+            var $ = layui.$;
+
+            table.render({
+                height: 'full-164',
+                cellMinWidth: 80,
+                page: true,
+                limit: 30,
+                autoSort: false,
+                url: '/message?_path_filter=*,*.title,*.id,*.createdDate,*.from,*.from.name',
+                id: 'jk-table',
+                elem: "#jk-table",
+                cols: [ [
+                    { field: 'id', checkbox: true },
+                    { field: 'title', title: '标题', sort: true },
+                    {
+                        field: 'from.name', title: '来自', width: 120, sort: true, templet: function (d) {
+                            return d.from.name;
+                        }
+                    },
+                    { field: 'createdDate', title: '创建时间', width: 200, sort: true }
+                ] ]
+            });
+
+            element.on('tab(jk-message-tab)', function (data) {
+                table.reload('jk-table', {
+                    where: {
+                        type: this.getAttribute('lay-id')
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>

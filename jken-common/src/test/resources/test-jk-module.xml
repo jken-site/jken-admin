@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-09T21:17:25.389+08:00
+  -->
+
+<module name="test">
+    <domains>
+        <domain name="测试domain" code="test-domain">
+            <authority name="测试查看" code="test-view-info" patterns="/test/info"/>
+            <authority name="测试编辑" code="test-edit-info" patterns="/test/info" httpMethods="PUT"/>
+        </domain>
+        <domain name="测试domain1" code="test-domain1" crud="true">
+            <authority name="查看用户" code="domain1-view-user" patterns="/domain1/*/user"/>
+            <authority name="修改用户" code="domain1-edit-user" patterns="/domain1/*/user" httpMethods="POST,PUT,DELETE"/>
+            <authority name="查看权限" code="domain1-view-authority" patterns="/domain1/*/authority"/>
+            <authority name="修改权限" code="domain1-edit-authority" patterns="/domain1/*/authority"
+                       httpMethods="POST,PUT,DELETE"/>
+        </domain>
+        <domain name="测试domain2" code="domain2" crud="true"/>
+    </domains>
+    <menus>
+        <mi name="系统管理" code="manage" iconCls="layui-icon-set">
+            <mi name="基础设置" code="set">
+                <mi name="公司信息" code="corp_info" href="corp/info" authorities="corp-view-info,corp-edit-info"/>
+            </mi>
+            <mi name="人员管理" code="member">
+                <mi name="用户管理" code="user" href="user"
+                    authorities="user-list,user-view,user-add,user-edit,user-delete"/>
+                <mi name="角色管理" code="role" href="role"
+                    authorities="role-list,role-view,role-add,role-edit,role-delete,role-view-user,role-edit-user,role-view-authority,role-edit-authority"/>
+            </mi>
+        </mi>
+    </menus>
+</module>

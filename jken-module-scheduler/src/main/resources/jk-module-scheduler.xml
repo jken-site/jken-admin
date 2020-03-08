@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-09T21:17:25.389+08:00
+  -->
+
+<module name="scheduler" sortNo="-200">
+    <domains>
+        <domain name="作业" code="job" crud="true"/>
+        <domain name="触发器" code="trigger" crud="true"/>
+    </domains>
+    <menus>
+        <mi name="调度管理" code="cms" iconCls="layui-icon-date">
+            <mi name="作业管理" code="job" href="job"
+                authorities="job-list,job-view,job-add,job-edit,job-delete"/>
+            <mi name="触发器管理" code="trigger" href="trigger"
+                authorities="trigger-list,trigger-view,trigger-add,trigger-edit,trigger-delete"/>
+        </mi>
+    </menus>
+    <dicts>
+        <dict name="作业类型" code="job_class">
+            <item value="jken.module.scheduler.job.SendMailJob" name="发送邮件"/>
+            <item value="jken.module.scheduler.job.NativeJob" name="执行本地命令"/>
+        </dict>
+    </dicts>
+</module>

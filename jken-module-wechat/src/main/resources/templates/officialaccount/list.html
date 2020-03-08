@@ -1,0 +1,238 @@
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-04T21:29:01.407+08:00
+  -->
+
+<!DOCTYPE html>
+<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>jken application</title>
+    <meta content="webkit" name="renderer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        name="viewport">
+    <link href="https://www.layuicdn.com/layui/css/layui.css" media="all" rel="stylesheet">
+    <link media="all" rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}">
+</head>
+
+<body>
+    <div class="layui-fluid">
+        <div class="layui-card">
+            <div class="layui-card-header layuiadmin-card-header-auto">
+
+                <div class="layui-form">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">名称</label>
+                            <div class="layui-input-inline">
+                                <input autocomplete="off" class="layui-input" name="name" placeholder="请输入" type="text">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">appid</label>
+                            <div class="layui-input-inline">
+                                <input autocomplete="off" class="layui-input" name="name" placeholder="请输入" type="text">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button class="layui-btn layuiadmin-btn-list" lay-filter="jk-search" lay-submit>
+                                <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="layui-card-body">
+
+                <script id="jk-toolbar" type="text/html">
+                <div class="layui-btn-container">
+                    <div class="layui-btn-group">
+                        <button sec:authorize="hasAuthority('officialaccount-add')" type="button" class="layui-btn" lay-event="create">新增</button>
+                        <button sec:authorize="hasAuthority('officialaccount-delete')" type="button" class="layui-btn" lay-event="batchDelete">批量删除</button>
+                    </div>
+                </div>
+            </script>
+
+                <table class="layui-table"
+                    lay-data="{height: 'full-128', cellMinWidth: 120, page: true, limit:30, autoSort: false, url:'officialaccount?_path_filter=*,*.id,*.name,*.code,*.logo,*.appid', id:'jk-table', toolbar: '#jk-toolbar'}"
+                    lay-filter="jk-table">
+                    <thead>
+                        <tr>
+                            <th lay-data="{field:'id', checkbox:true}"></th>
+                            <th lay-data="{field:'name', sort: true, templet:'#nameTpl'}">名称</th>
+                            <th lay-data="{field:'code', sort: true}">代号</th>
+                            <th lay-data="{field:'appid', sort: true}">appid</th>
+                            <th lay-data="{width:100, toolbar: '#jk-tool', align: 'center'}" sec:authorize="hasAuthority('officialaccount-view')||hasAuthority('officialaccount-delete')">操作</th>
+                        </tr>
+                    </thead>
+                </table>
+
+                <script type="text/html" id="nameTpl">
+                    {{#  if(d.logo&&d.logo!=""){ }}
+                        <img src="{{d.logo}}" style="height:28px;" />
+                    {{#  } }}
+
+                    {{d.name}}
+                </script>
+
+                <script id="jk-tool" type="text/html">
+                <div class="layui-btn-group">
+                    <button sec:authorize="hasAuthority('officialaccount-view')" type="button" class="layui-btn layui-btn-xs" lay-event="edit" th:text="${#authorization.expr('hasAuthority(''officialaccount-edit'')')?'编辑':'查看'}">编辑</button>
+                    <button sec:authorize="hasAuthority('officialaccount-delete')" type="button" class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</button>
+                </div>
+            </script>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script th:inline="javascript" type="text/javascript">
+        var base = /*[[${#httpServletRequest.getContextPath()}]]*/"";
+        var listAble = /*[[${#authorization.expr("hasAuthority('officialaccount-list')")}]]*/false;
+        var viewAble = /*[[${#authorization.expr("hasAuthority('officialaccount-view')")}]]*/false;
+        var addAble = /*[[${#authorization.expr("hasAuthority('officialaccount-add')")}]]*/false;
+        var editAble = /*[[${#authorization.expr("hasAuthority('officialaccount-edit')")}]]*/false;
+        var deleteAble = /*[[${#authorization.expr("hasAuthority('officialaccount-delete')")}]]*/false;
+    </script>
+    <script>
+        layui.config({
+            base: base + '/layuiadmin/'
+        }).use(['table'], function () {
+            var table = layui.table, form = layui.form;
+            var $ = layui.$;
+
+            table.on('sort(jk-table)', function (obj) {
+                table.reload('jk-table', {
+                    initSort: obj,
+                    where: {
+                        sort: obj.field + ',' + obj.type
+                    }
+                });
+            });
+
+            table.on('toolbar(jk-table)', function (obj) {
+                var checkStatus = table.checkStatus(obj.config.id);
+                switch (obj.event) {
+                    case 'create':
+                        if (addAble) {
+                            layer.open({
+                                type: 2,
+                                title: '添加公众号',
+                                content: base + '/officialaccount/add',
+                                maxmin: true,
+                                area: ['800px', '800px'],
+                                btn: ['确定', '取消'],
+                                yes: function (index, layero) {
+                                    var submit = layero.find('iframe').contents().find("#jk-form-submit");
+                                    submit.click();
+                                }
+                            });
+                        } else {
+                            layer.msg('无权限');
+                        }
+                        break;
+                    case 'batchDelete':
+                        var data = checkStatus.data;
+                        if (data.length > 0) {
+                            if (deleteAble) {
+                                layer.confirm('真的删除么？', function (index) {
+                                    var ids = $.map(data, function (n, i) {
+                                        return n.id
+                                    });
+
+                                    $.ajax({
+                                        url: base + '/officialaccount',
+                                        dataType: 'json',
+                                        data: { ids: ids },
+                                        type: 'delete',
+                                        success: function (resp) {
+                                            if (resp.code == 0) {
+                                                layer.close(index);
+                                                table.reload('jk-table');
+                                            } else {
+                                                layer.msg(resp.msg, { time: 2000 }, function () { });
+                                            }
+                                        },
+                                        error: function (resp) {
+                                            layer.msg(resp.responseJSON.message, { time: 2000 }, function () { });
+                                        }
+                                    });
+                                });
+                            } else {
+                                layer.msg('无权限');
+                            }
+                        } else {
+                            layer.msg('请至少选择一条记录', { time: 2000 }, function () { });
+                        }
+                        break;
+                };
+            });
+
+            //监听行工具事件
+            table.on('tool(jk-table)', function (obj) {
+                var data = obj.data;
+                if (obj.event === 'del') {
+                    if (deleteAble) {
+                        layer.confirm('真的删除么？', function (index) {
+                            $.ajax({
+                                url: base + '/officialaccount/' + obj.data.id,
+                                dataType: 'json',
+                                type: 'delete',
+                                success: function (resp) {
+                                    if (resp.code == 0) {
+                                        obj.del();
+                                        layer.close(index);
+                                        table.reload('jk-table');
+                                    } else {
+                                        layer.msg(resp.msg, { time: 2000 }, function () { });
+                                    }
+                                },
+                                error: function (resp) {
+                                    layer.msg(resp.responseJSON.message, { time: 2000 }, function () { });
+                                }
+                            });
+                        });
+                    } else {
+                        layer.msg('无权限');
+                    }
+                } else if (obj.event === 'edit') {
+                    if (viewAble) {
+                        layer.open({
+                            type: 2,
+                            title: '编辑公众号',
+                            content: base + '/officialaccount/' + obj.data.id,
+                            maxmin: true,
+                            area: ['800px', '800px'],
+                            btn: editAble ? ['确定', '取消'] : ['关闭'],
+                            yes: editAble ? function (index, layero) {
+                                var submit = layero.find('iframe').contents().find("#jk-form-submit");
+                                submit.click();
+                            } : null
+                        });
+                    } else {
+                        layer.msg('无权限');
+                    }
+                }
+            });
+
+            //监听搜索
+            form.on('submit(jk-search)', function (data) {
+                var field = data.field;
+
+                //执行重载
+                table.reload('jk-table', {
+                    where: field
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

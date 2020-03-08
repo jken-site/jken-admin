@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-09T21:17:25.389+08:00
+  -->
+
+<module name="cms" sortNo="-2000">
+    <domains>
+        <domain name="站点" code="station" crud="true"/>
+        <domain name="栏目" code="channel" crud="true"/>
+        <domain name="内容" code="content" crud="true"/>
+    </domains>
+    <menus>
+        <mi name="内容管理" code="cms" iconCls="layui-icon-website">
+            <mi name="站点管理" code="station" href="station"
+                authorities="station-list,station-view,station-add,station-edit,station-delete"/>
+            <mi name="栏目管理" code="channel" href="channel"
+                authorities="channel-list,channel-view,channel-add,channel-edit,channel-delete"/>
+            <mi name="内容管理" code="content" href="content"
+                authorities="content-list,content-view,content-add,content-edit,content-delete"/>
+        </mi>
+    </menus>
+</module>

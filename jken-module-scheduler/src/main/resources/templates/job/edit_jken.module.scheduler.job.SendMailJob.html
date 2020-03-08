@@ -1,0 +1,157 @@
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-04T15:00:37.486+08:00
+  -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>jken application</title>
+    <meta content="webkit" name="renderer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        name="viewport">
+    <link href="https://www.layuicdn.com/layui/css/layui.css" media="all" rel="stylesheet">
+</head>
+
+<body>
+    <div class="layui-form" id="jk-form" lay-filter="jk-form" style="padding: 20px 30px 0 0;" th:object="${entity}">
+        <input type="hidden" name="jobClass" value="org.quartz.jobs.ee.mail.SendMailJob">
+        <input type="hidden" name="objectMap['mail.smtp.auth']" value="true">
+        <!--<input type="hidden" name="objectMap['mail.smtp.starttls.enable']" value="true">-->
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>作业名称</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入作业名称"
+                    th:field="*{name}" type="text">
+            </div>
+            <div class="layui-form-mid layui-word-aux">必须唯一</div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>smtp host</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="The host name of the smtp server."
+                       th:field="*{objectMap['smtp_host']}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>recipient</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="The e-mail address to send the mail to." lay-verify="email"
+                       th:field="*{objectMap['recipient']}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">cc recipient</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="The e-mail address to cc the mail to." lay-verify="email"
+                       th:field="*{objectMap['cc_recipient']}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>sender</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="The e-mail address to claim the mail is from." lay-verify="email"
+                       th:field="*{objectMap['sender']}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">reply to</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="The e-mail address the message should say to reply to." lay-verify="email"
+                       th:field="*{objectMap['reply_to']}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>subject</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="The subject to place on the e-mail."
+                       th:field="*{objectMap['subject']}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label" jk:required>message</label>
+            <div class="layui-input-block">
+                <textarea th:field="*{objectMap['message']}" placeholder="The e-mail message body." class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">content type</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="The message content type. For example, text/html."
+                       th:field="*{objectMap['content_type']}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">username</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="Username for authenticated session. Password must also be set if username is used."
+                       th:field="*{objectMap['username']}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">password</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" placeholder="Password for authenticated session."
+                       th:field="*{objectMap['password']}" type="text">
+            </div>
+        </div>
+
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">作业简介</label>
+            <div class="layui-input-block">
+                <textarea autocomplete="off" class="layui-textarea" th:field="*{description}"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input id="jk-form-submit" lay-filter="jk-form-submit" lay-submit type="button" value="确认添加">
+            <input id="jk-form-edit" lay-filter="jk-form-edit" lay-submit type="button" value="确认编辑">
+        </div>
+    </div>
+
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script th:inline="javascript" type="text/javascript">
+        var base = /*[[${#httpServletRequest.getContextPath()}]]*/"";
+        var entityName = /*[[${entity.name}]]*/null;
+        var entityGroup = /*[[${entity.group}]]*/null;
+    </script>
+    <script>
+        layui.config({
+            base: base + '/layuiadmin/'
+        }).extend({
+            edit: 'core/edit'
+        }).use(['edit'], function () {
+            var $ = layui.$, form = layui.form;
+            //监听提交
+            form.on('submit(jk-form-submit)', function (data) {
+                $.ajax({
+                    url: base + '/job' + (entityName ? '/' + (entityName + '-' + entityGroup) : ''),
+                    data: data.field,
+                    dataType: 'json',
+                    type: entityName ? 'put' : 'post',
+                    success: function (resp) {
+                        if (resp.code == 0) {
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.layui.table.reload('jk-table');
+                            parent.layer.close(index);
+                        } else {
+                            layer.msg(resp.msg, { time: 2000 }, function () { });
+                        }
+                    },
+                    error: function (resp) {
+                        layer.msg(resp.responseJSON.message, { time: 2000 }, function () { });
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</body>
+
+</html>

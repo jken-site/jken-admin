@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-09T21:17:25.389+08:00
+  -->
+
+<module name="code" sortNo="0" ignorePatterns="/error,/error/**">
+    <domains>
+        <domain name="公司" code="corp">
+            <authority name="公司查看" code="corp-view-info" patterns="/corp/info"/>
+            <authority name="公司编辑" code="corp-edit-info" patterns="/corp/info" httpMethods="PUT"/>
+        </domain>
+        <domain name="角色" code="role" crud="true">
+            <authority name="查看用户" code="role-view-user" patterns="/role/*/user"/>
+            <authority name="修改用户" code="role-edit-user" patterns="/role/*/user" httpMethods="POST,PUT,DELETE"/>
+            <authority name="查看权限" code="role-view-authority" patterns="/role/*/authority"/>
+            <authority name="修改权限" code="role-edit-authority" patterns="/role/*/authority"
+                       httpMethods="POST,PUT,DELETE"/>
+        </domain>
+        <domain name="菜单" code="menu" crud="true"/>
+        <domain name="用户" code="user" crud="true"/>
+        <domain name="字典" code="dict" crud="true"/>
+    </domains>
+    <menus>
+        <mi name="系统管理" code="manage" iconCls="layui-icon-set">
+            <mi name="基础设置" code="set">
+                <mi name="公司信息" code="corp_info" href="corp/info" authorities="corp-view-info,corp-edit-info"/>
+                <mi name="菜单管理" code="menu" href="menu"
+                    authorities="menu-list,menu-view,menu-add,menu-edit,menu-delete"/>
+                <mi name="字典管理" code="dict" href="dict"
+                    authorities="dict-list,dict-view,dict-add,dict-edit,dict-delete"/>
+            </mi>
+            <mi name="人员管理" code="member">
+                <mi name="用户管理" code="user" href="user"
+                    authorities="user-list,user-view,user-add,user-edit,user-delete"/>
+                <mi name="角色管理" code="role" href="role"
+                    authorities="role-list,role-view,role-add,role-edit,role-delete,role-view-user,role-edit-user,role-view-authority,role-edit-authority"/>
+            </mi>
+        </mi>
+    </menus>
+</module>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-04T15:00:37.522+08:00
+  -->
+
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <!-- logger name="org.springframework" level="DEBUG"/ -->
+</configuration>

@@ -1,0 +1,138 @@
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-05T19:35:47.659+08:00
+  -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>jken application</title>
+    <meta content="webkit" name="renderer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        name="viewport">
+    <link href="https://www.layuicdn.com/layui/css/layui.css" media="all" rel="stylesheet">
+    <style>
+        .layui-fluid {
+            padding: 15px;
+            position: relative;
+            margin: 0 auto;
+        }
+        .layui-form-label {
+            width: 170px;
+        }
+        .layui-input-block {
+            margin-left: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="layui-form" id="jk-form" lay-filter="jk-form" style="padding: 20px 30px 0 0;" th:object="${entity}">
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>名称</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入名称"
+                       th:field="*{name}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">logo</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" maxlength="200" minlength="4"
+                       placeholder="请输入logo地址" th:field="*{logo}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+                <textarea autocomplete="off" class="layui-textarea" th:field="*{description}"></textarea>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>AppID(公众号ID)</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入AppID(公众号ID)"
+                       th:field="*{appid}" type="text">
+            </div>
+            <div class="layui-form-mid layui-word-aux">必须唯一</div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>AppSecret(公众号密钥)</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入AppSecret(公众号密钥)	"
+                       th:field="*{secret}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>Token(令牌)</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入token"
+                       th:field="*{token}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>EncodingAESKey<br/>(消息加密密钥)</label>
+            <div class="layui-input-block">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入aesKey"
+                       th:field="*{aesKey}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input id="jk-form-submit" lay-filter="jk-form-submit" lay-submit type="button" value="确认添加">
+            <input id="jk-form-edit" lay-filter="jk-form-edit" lay-submit type="button" value="确认编辑">
+        </div>
+    </div>
+
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script th:inline="javascript" type="text/javascript">
+        var base = /*[[${#httpServletRequest.getContextPath()}]]*/"";
+        var entityId = /*[[${entity.id}]]*/null;
+        var addAble = /*[[${#authorization.expr("hasAuthority('officialaccount-add')")}]]*/false;
+        var editAble = /*[[${#authorization.expr("hasAuthority('officialaccount-edit')")}]]*/false;
+    </script>
+    <script>
+        layui.config({
+            base: base + '/layuiadmin/'
+        }).extend({
+            edit: 'core/edit',
+            xmSelect: 'core/xm-select' //主入口模块
+        }).use(['edit'], function () {
+            var $ = layui.$, form = layui.form;
+
+            //监听提交
+            form.on('submit(jk-form-submit)', function (data) {
+                if (entityId && editAble || !entityId && addAble) {
+                    $.ajax({
+                        url: base + '/officialaccount' + (entityId ? '/' + entityId : ''),
+                        data: data.field,
+                        dataType: 'json',
+                        type: entityId ? 'put' : 'post',
+                        success: function (resp) {
+                            if (resp.code == 0) {
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.layui.table.reload('jk-table');
+                                parent.layer.close(index);
+                            } else {
+                                layer.msg(resp.msg, { time: 2000 }, function () { });
+                            }
+                        },
+                        error: function (resp) {
+                            layer.msg(resp.responseJSON.message, { time: 2000 }, function () { });
+                        }
+                    });
+                } else {
+                    layer.msg('无权限');
+                }
+                return false;
+            });
+        })
+    </script>
+</body>
+
+</html>

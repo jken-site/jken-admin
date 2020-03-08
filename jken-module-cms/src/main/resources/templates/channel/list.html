@@ -1,0 +1,196 @@
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-04T15:00:37.494+08:00
+  -->
+
+<!DOCTYPE html>
+<html xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="utf-8">
+  <title>jken application</title>
+  <meta content="webkit" name="renderer">
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+    name="viewport">
+  <link href="https://www.layuicdn.com/layui/css/layui.css" media="all" rel="stylesheet">
+  <link media="all" rel="stylesheet" th:href="@{/layuiadmin/style/admin.css}">
+</head>
+
+<body>
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-card-body">
+        <button sec:authorize="hasAuthority('channel-add')" class="layui-btn" id="jk-create">新增</button>
+        <table class="layui-table layui-form" id="jk-treeTable"></table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://www.layuicdn.com/layui/layui.js"></script>
+  <script th:inline="javascript" type="text/javascript">
+    var base = /*[[${#httpServletRequest.getContextPath()}]]*/"";
+    var listAble = /*[[${#authorization.expr("hasAuthority('channel-list')")}]]*/false;
+    var viewAble = /*[[${#authorization.expr("hasAuthority('channel-view')")}]]*/false;
+    var addAble = /*[[${#authorization.expr("hasAuthority('channel-add')")}]]*/false;
+    var editAble = /*[[${#authorization.expr("hasAuthority('channel-edit')")}]]*/false;
+    var deleteAble = /*[[${#authorization.expr("hasAuthority('channel-delete')")}]]*/false;
+  </script>
+  <script>
+    layui.config({
+      base: base + '/layuiadmin/'
+    }).extend({
+      treeTable: 'core/treeTable' //主入口模块
+    }).use(['treeTable', 'layer'], function () {
+      var treeTable = layui.treeTable;
+      var $ = layui.$;
+
+      var opWidth = 0;
+      if (addAble) {
+        opWidth += 60;
+      }
+      if (viewAble) {
+        opWidth += 40;
+      }
+      if (deleteAble) {
+        opWidth += 40;
+      }
+
+      var cols = [
+        {
+          key: 'name',
+          title: '名称',
+          align: 'left'
+        },
+        {
+          key: 'path',
+          title: '访问路径',
+          align: 'left'
+        },
+        {
+          key: 'sortNo',
+          title: '排序号',
+          width: '60px',
+          align: 'right'
+        }
+      ];
+      if (opWidth > 0) {
+
+        cols.push({
+          title: '操作',
+          align: 'center',
+          width: opWidth + 'px',
+          template: function (item) {
+            var btn_add = addAble ? "<button type='button' class='layui-btn layui-btn-xs tool' data-action='add' data-item='" + item.id + "'>添加下级</button>" : "";
+            var btn_edit = viewAble ? "<button type='button' class='layui-btn layui-btn-xs tool' data-action='edit' data-item='" + item.id + "'>" + (editAble ? "编辑" : "查看") + "</button>" : "";
+            var btn_delete = deleteAble ? "<button type='button' class='layui-btn layui-btn-xs layui-btn-danger tool' data-action='delete' data-item='" + item.id + "'>删除</button>" : "";
+
+            return "<div class='layui-btn-group'>" + btn_add + btn_edit + btn_delete + "</div>";
+          }
+        });
+
+      }
+
+      var channelTable = treeTable.render({
+        id: "jk-treeTable",
+        elem: '#jk-treeTable',
+        url: base + '/channel?tree=',
+        icon_key: 'name',
+        is_checkbox: false,
+        cols: cols
+      });
+
+      treeTable.reload = function () {
+        treeTable.render(channelTable);
+      };
+      if (addAble) {
+        $("#jk-create").on("click", function () {
+          layer.open({
+            type: 2,
+            title: '添加内容栏目',
+            content: base + '/channel/add',
+            maxmin: true,
+            area: ['800px', '800px'],
+            btn: ['确定', '取消'],
+            yes: function (index, layero) {
+              var submit = layero.find('iframe').contents().find("#jk-form-submit");
+              submit.click();
+            }
+          });
+        });
+      }
+
+      $("#jk-treeTable").delegate(".tool", "click", function () {
+        var $this = $(this);
+        var action = $this.data("action");
+        var id = $this.data("item");
+        switch (action) {
+          case 'add':
+            if (addAble) {
+              layer.open({
+                type: 2,
+                title: '添加内容栏目',
+                content: base + '/channel/add?parent=' + id,
+                maxmin: true,
+                area: ['800px', '800px'],
+                btn: ['确定', '取消'],
+                yes: function (index, layero) {
+                  var submit = layero.find('iframe').contents().find("#jk-form-submit");
+                  submit.click();
+                }
+              });
+            } else {
+              layer.msg('无权限');
+            }
+            break;
+          case 'edit':
+            if (viewAble) {
+              layer.open({
+                type: 2,
+                title: '编辑内容栏目',
+                content: base + '/channel/' + id,
+                maxmin: true,
+                area: ['800px', '800px'],
+                btn: editAble ? ['确定', '取消'] : ['关闭'],
+                yes: editAble ? function (index, layero) {
+                  var submit = layero.find('iframe').contents().find("#jk-form-submit");
+                  submit.click();
+                } : null
+              });
+            } else {
+              layer.msg('无权限');
+            }
+            break;
+          case 'delete':
+            if (deleteAble) {
+              layer.confirm('真的删除么？', function (index) {
+                $.ajax({
+                  url: base + '/channel/' + id,
+                  dataType: 'json',
+                  type: 'delete',
+                  success: function (resp) {
+                    if (resp.code == 0) {
+                      layer.close(index);
+                      treeTable.reload();
+                    } else {
+                      layer.msg(resp.msg, { time: 2000 }, function () { });
+                    }
+                  },
+                  error: function (resp) {
+                    layer.msg(resp.responseJSON.message, { time: 2000 }, function () { });
+                  }
+                });
+              });
+            } else {
+              layer.msg('无权限');
+            }
+            break;
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

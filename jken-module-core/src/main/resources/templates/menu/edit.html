@@ -1,0 +1,164 @@
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-04T15:00:37.490+08:00
+  -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <title>jken application</title>
+    <meta content="webkit" name="renderer">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0"
+        name="viewport">
+    <link href="https://www.layuicdn.com/layui/css/layui.css" media="all" rel="stylesheet">
+</head>
+
+<body>
+    <div class="layui-form" id="jk-form" lay-filter="jk-form" style="padding: 20px 30px 0 0;" th:object="${entity}">
+        <div class="layui-form-item">
+            <label class="layui-form-label">上级菜单</label>
+            <div class="layui-input-inline">
+                <div id="jk-parent"></div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>名称</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入菜单名称"
+                    th:field="*{name}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label" jk:required>代号</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" lay-verify="required" placeholder="请输入菜单代号"
+                    th:field="*{code}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">跳转链接</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" maxlength="200" minlength="4" placeholder="请输入跳转链接"
+                    th:field="*{href}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">图标样式</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" maxlength="20" minlength="4" placeholder="请输入图标样式"
+                    th:field="*{iconCls}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">权限代号</label>
+            <div class="layui-input-inline">
+                <textarea autocomplete="off" class="layui-textarea" style="width: 400px; height: 150px;"
+                    th:field="*{authorities}"></textarea>
+                <div style="width: 400px; font-size: 12px;">该菜单下所拥有的权限(用,分隔), 仅用于权限分类</div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">排序号</label>
+            <div class="layui-input-inline">
+                <input autocomplete="off" class="layui-input" lay-verify="number" placeholder="请输入排序号"
+                    th:field="*{sortNo}" type="text">
+            </div>
+        </div>
+        <div class="layui-form-item layui-hide">
+            <input id="jk-form-submit" lay-filter="jk-form-submit" lay-submit type="button" value="确认添加">
+            <input id="jk-form-edit" lay-filter="jk-form-edit" lay-submit type="button" value="确认编辑">
+        </div>
+    </div>
+
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script th:inline="javascript" type="text/javascript">
+        var base = /*[[${#httpServletRequest.getContextPath()}]]*/"";
+        var entityId = /*[[${entity.id}]]*/null;
+        var parentId = /*[[${entity.parent==null?null:entity.parent.id}]]*/null;
+        var addAble = /*[[${#authorization.expr("hasAuthority('menu-add')")}]]*/false;
+        var editAble = /*[[${#authorization.expr("hasAuthority('menu-edit')")}]]*/false;
+    </script>
+    <script>
+        layui.config({
+            base: base + '/layuiadmin/'
+        }).extend({
+            edit: 'core/edit',
+            xmSelect: 'core/xm-select' //主入口模块
+        }).use(['edit', 'xmSelect'], function () {
+            var $ = layui.$, form = layui.form;
+            var xmSelect = layui.xmSelect;
+
+            var parentSelect = xmSelect.render({
+                el: '#jk-parent',
+                name: "parent",
+                model: { label: { type: 'text' } },
+                radio: true,
+                initValue: parentId?[parentId]:null,
+                clickClose: true,
+                filterable: true,
+                tree: {
+                    show: true,
+                    strict: false,
+                    expandedKeys: true
+                },
+                toolbar: {
+                    show: true,
+                    list: ['CLEAR']
+                },
+                height: 'auto',
+                data: []
+            })
+
+            $.ajax({
+                url: base + '/menu?_s=tree',
+                dataType: 'json',
+                type: 'get',
+                success: function (resp) {
+                    var data = resp.data;
+                    if(!data) data = [];
+                    parentSelect.update({
+                        data: data,
+                        autoRow: true
+                    });
+                },
+                error: function (resp) {
+                    layer.msg(resp.responseJSON.message, { time: 2000 }, function () { });
+                }
+            });
+
+            //监听提交
+            form.on('submit(jk-form-submit)', function (data) {
+                if (entityId && editAble || !entityId && addAble) {
+                    $.ajax({
+                        url: base + '/menu' + (entityId ? '/' + entityId : ''),
+                        data: data.field,
+                        dataType: 'json',
+                        type: entityId ? 'put' : 'post',
+                        success: function (resp) {
+                            if (resp.code == 0) {
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.layui.treeTable.reload();
+                                parent.layer.close(index);
+                            } else {
+                                layer.msg(resp.msg, { time: 2000 }, function () { });
+                            }
+                        },
+                        error: function (resp) {
+                            layer.msg(resp.responseJSON.message, { time: 2000 }, function () { });
+                        }
+                    });
+                } else {
+                    layer.msg('无权限');
+                }
+                return false;
+            });
+        })
+    </script>
+</body>
+
+</html>

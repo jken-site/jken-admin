@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2020.
+  ~ @Link: http://jken.site
+  ~ @Author: ken kong
+  ~ @LastModified: 2020-02-09T21:17:25.389+08:00
+  -->
+
+<module name="blog" sortNo="-1000" ignorePatterns="/editormd/**">
+    <domains>
+        <domain name="文章" code="article" crud="true"/>
+        <domain name="文章分类" code="articleCategory" crud="true"/>
+        <domain name="文章标签" code="articleTag" crud="true"/>
+    </domains>
+    <menus>
+        <mi name="博客管理" code="cms" iconCls="layui-icon-list">
+            <mi name="文章管理" code="article" href="article"
+                authorities="article-list,article-view,article-add,article-edit,article-delete"/>
+            <mi name="文章分类" code="articleCategory" href="articleCategory"
+                authorities="articleCategory-list,articleCategory-view,articleCategory-add,articleCategory-edit,articleCategory-delete"/>
+            <mi name="文章标签" code="articleTag" href="articleTag"
+                authorities="articleTag-list,articleTag-view,articleTag-add,articleTag-edit,articleTag-delete"/>
+        </mi>
+    </menus>
+</module>
