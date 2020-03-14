@@ -21,8 +21,10 @@ jken-admin是一个Java语言编写的简易的后台管理平台，致力于为
 
 ![系统功能概况](http://cdn.jken.site/images/demo.jken.site.png "系统功能概况")
 
+由 http://demo.jken.site/admin 域名进入，会根据子域名demo和公司代号匹配，找出对应的公司
 ![根据域名自动定位公司](http://cdn.jken.site/images/login-demo.jken.site.png "根据域名自动定位公司")
 
+由 http://jken.site/admin 域名进入，公共域名首次进入需要选择公司，登录成功后会记录于cookie中，再次打开会匹配上对应公司。
 ![公共域名首次需选择公司](http://cdn.jken.site/images/login-jken.site.png "公共域名首次需选择公司")
 
 ### 模块
