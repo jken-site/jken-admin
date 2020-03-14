@@ -17,8 +17,13 @@ jken-admin是一个Java语言编写的简易的后台管理平台，致力于为
 
 ### Demo
 [点击这里进入Demo地址](http://demo.jken.site/admin/login)
-
 登录账号/密码： admin/qwe123
+
+![系统功能概况](http://cdn.jken.site/images/demo.jken.site.png "系统功能概况")
+
+![根据域名自动定位公司](http://cdn.jken.site/images/login-demo.jken.site.png "根据域名自动定位公司")
+
+![公共域名首次需选择公司](http://cdn.jken.site/images/login-jken.site.png "公共域名首次需选择公司")
 
 ### 模块
 - 通用管理
